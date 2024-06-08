@@ -1,12 +1,10 @@
 import pandas as pd
 
 
-data = pd.read_csv("apapa.csv")
+# data = pd.read_json("record.json")
 
-data.head()
-
-print(data["Name"].tolist())
-
-# df['new_column'] = my_list
-# # Save the modified DataFrame back to a CSV file
-# df.to_csv('modified_file.csv', index=False)
+# data.to_csv("my_contacts.csv", index=False)
+df = pd.read_csv("my_contacts.csv")
+data = df["name"]
+data = data.dropna()
+print(data)

@@ -7,7 +7,7 @@ driver = webdriver.Chrome()
 # By = webdriver.common.by.By()
 
     # web.open(f"https://web.whatsapp.com/send?phone={phone_no}&text={quote(message)}")
-// https://web.whatsapp.com/send?phone=+2349164702871&text=This is an automated message sent using selenium in python
+// https://web.whatsapp.com/send?phone=+256762732760&text=This is an automated message sent using selenium in python
 class WhatsApp:
 
     @classmethod
