@@ -1,0 +1,78 @@
+version: '3'
+
+services:
+
+  # whatsapp_instance_1:
+  #   image: whats-bot:1.0
+  #   container_name: whatsapp_instance_1
+  #   depends_on:
+  #     - selenium-hub
+  #   networks:
+  #     - selenium-net
+  #   ports:
+  #     - "8001:8000"
+  #   environment:
+  #     - INSTANCE_ID=1
+
+  HubService:
+    image: selenium/hub:latest
+    container_name: seleniumHub
+    ports:
+      - "4445:4444"
+      - "4442:4442"
+      - "4443:4443"
+
+    networks:
+      - gridnetwork
+
+  ChromeService:
+    image: selenium/node-chrome:latest
+    container_name: chromeNode
+    volumes:
+      - /dev/shm:/dev/shm
+    ports:
+      - "4446:5900"
+    environment:
+      - HUB_HOST=seleniumHub
+      - SE_EVENT_BUS_HOST=seleniumHub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    
+    depends_on:
+      - HubService
+
+    networks:
+      - gridnetwork
+
+networks:
+  gridnetwork:
+    driver: bridge
+
+  no-internet: 
+    driver: bridge
+    internal: true
+
+
+  # whatsapp_instance_2:
+  #   image: whats-bot:v1.0
+  #   container_name: whatsapp_instance_2
+  #   ports:
+  #     - "8002:8000"
+  #   environment:
+  #     - INSTANCE_ID=2
+
+  # whatsapp_instance_3:
+  #   image: whats-bot:v1.0
+  #   container_name: whatsapp_instance_3
+  #   ports:
+  #     - "8003:8000"
+  #   environment:
+  #     - INSTANCE_ID=3
+
+  # whatsapp_instance_4:
+  #   image: whats-bot:v1.0
+  #   container_name: whatsapp_instance_4
+  #   ports:
+  #     - "8004:8000"
+  #   environment:
+  #     - INSTANCE_ID=4

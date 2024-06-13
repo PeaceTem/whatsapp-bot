@@ -9,8 +9,10 @@ from selenium.common.exceptions import NoSuchElementException
 
 import time
 import timeit
+import threading
 from urllib.parse import quote, urlencode
 import pandas as pd
+import numpy as np
 
 # driver = webdriver.Remote(
 #    command_executor='http://127.0.0.1:4444/wd/hub',
@@ -25,22 +27,59 @@ import pandas as pd
 
 text = "Hey, this message was sent using Selenium"
 
-driver = webdriver.Chrome()
-driver.maximize_window()
+driver1 = webdriver.Chrome()
+driver1.maximize_window()
 
-driver.get("https://web.whatsapp.com")
-print("Scan QR Code, And then Enter")
-time.sleep(50)
-print("Logged In")
+driver2 = webdriver.Edge()
+driver2.maximize_window()
+
 
 status = []
-def send_msg_to_contact(contact):
+
+
+df = pd.read_csv("contacts.csv")
+contacts_all = df["Name"].tolist()
+print("Gotten the names")
+# Determine the number of rows in each split
+num_rows = len(df["Name"])
+split_size = num_rows // 2
+
+# Split the DataFrame into 4 parts
+dfs = np.array_split(df, 2)
+# print(dfs)
+df_all = []
+for df in dfs:
+    print(df["Name"].tolist())
+    df_all.append(df["Name"].tolist())
+
+# print(df_all)
+
+driver1.get("https://web.whatsapp.com")
+print("Scan QR Code for Driver 1, And then Enter")
+time.sleep(10)
+print("Logged In")
+
+driver2.get("https://web.whatsapp.com")
+print("Scan QR Code for Driver 1, And then Enter")
+time.sleep(100)
+print("Logged In")
+drivers = [driver1, driver2]
+
+def send_bulk_msg(driver, contacts):
+    for contact in contacts:
+        print(f"Starting: {contact}")
+        send_msg_to_contact(driver, contact)
+
+
+def send_msg_to_contact(driver, contact):
     input_box_path = "#side > div._ak9t > div > div._ai04 > div._ai05 > div > div > p"
     input_box_search = WebDriverWait(driver,50).until(lambda driver: driver.find_element(by=By.CSS_SELECTOR, value=input_box_path))
         
-    ActionChains(driver).click(input_box_search).send_keys(contact).perform()
+    actions = ActionChains(driver)
+    actions.click(input_box_search).perform()
+    actions.send_keys(contact).perform()
     # print("Found the Search Box!")
-    time.sleep(0.3)
+    time.sleep(0.5)
     try:
         selected_contact = WebDriverWait(driver,50).until(lambda driver: driver.find_element(by=By.XPATH, value="//span[@title='"+contact+"']"))
         selected_contact.click()
@@ -54,42 +93,24 @@ def send_msg_to_contact(contact):
         ActionChains(driver).click(back).perform()
         status.append("Not Sent")
 
-    time.sleep(0.1)
+    time.sleep(0.5)
 
-
-df = pd.read_csv("contacts.csv")
-contacts = df["Name"].tolist()
-print("Gotten the names")
-
-# def send_bulk_msg():
-for contact in contacts:
-    send_msg_to_contact(contact)
-
-
-
-
-# # Measure the execution time of example_function
-# execution_time = timeit.timeit("send_bulk_msg()", setup="from __main__ import send_bulk_msg", number=1)
-# print("Doing the timing job")
-# print(f"Execution time: {execution_time / 30} seconds per call")
 
 
 # df["Status"] = status
 # df.to_csv("status.csv", index=False)
-time.sleep(180)
-driver.quit()
 
 
-# research more about selenium grid
-# learn how to use windows remote connection
-# use flutter to get the contacts on phone and send a message template to all of them
-# learn how to use docker
+if __name__ == "__main__":
+    # Create threads
+    thread1 = threading.Thread(target=send_bulk_msg(drivers[0], df_all[0]))
+    thread2 = threading.Thread(target=send_bulk_msg(drivers[1], df_all[1]))
 
-# use flutter to send messages to multiple people at once
-# get contacts list on a particular phone
-# insert as many as possible numbers to a phone's contacts list
-# upload a csv file that contains the phone numbers and save them
-# you can also add delete function to it.
-# Basically, you can create your own Contact app with a new design and upload it to google playstore
-# Octave go pay for your playstore account
+    # Start threads
+    thread1.start()
+    thread2.start()
+
+    while True:
+        time.sleep(1)
+
 

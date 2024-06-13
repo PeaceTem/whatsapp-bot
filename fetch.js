@@ -36,8 +36,8 @@ function downloadObjectAsJson(object, filename) {
     const jsonString = JSON.stringify(object, null, 2);
 
     // Create a blob from the JSON string
-    const blob = new Blob([jsonString], { type: 'text/csv' });
-    // const blob = new Blob([jsonString], { type: 'application/json' });
+    // const blob = new Blob([jsonString], { type: 'text/csv' });
+    const blob = new Blob([jsonString], { type: 'application/json' });
 
     // Create a URL for the blob
 
@@ -55,4 +55,4 @@ function downloadObjectAsJson(object, filename) {
     document.body.removeChild(a);
 };
 
-downloadObjectAsJson(records, 'my_contacts.json');
+downloadObjectAsJson(records, 'wa_contacts.json');
