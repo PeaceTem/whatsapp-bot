@@ -1,12 +1,10 @@
 import pandas as pd
 
 
-data = pd.read_json("wa2_contacts.json")
+data = pd.read_json("new_wa_contacts.json")
 
-data.to_csv("wa2_contacts.csv", index=False)
-df = pd.read_csv("wa2_contacts.csv")
+data.to_csv("new_wa_contacts.csv", index=False)
+df = pd.read_csv("new_wa_contacts.csv")
 data = df["name"]
 data = data.dropna()
-print(data)
-
-data.to_csv("wa_names.csv", index=False)
+data.to_csv("new_contacts.csv", index=False)
